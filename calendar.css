@@ -48,21 +48,5 @@ button {
 .calendar-days p {
     margin: 0;
     padding: 1em;
-    border: 1px blue solid;
-}
-
-.calendar-days p:nth-child(n + 1) {
-    margin-left: -1px;
-}
-
-.calendar-days p {
-    margin-bottom: -1px;
-}
-
-#calendar-previous-month {
-    grid-area: back;
-}
-
-#calendar-next-month {
-    grid-area: next;
+    border: 1px black;
 }
