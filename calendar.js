@@ -95,3 +95,29 @@ function Month(year,month){
         return weeks;
     };
 }
+
+// fills the calendar cells with values representing the days of the month
+function fillCalendar(month) {
+    let days = document.querySelector('.calendar-days');
+    let weeks = month.getWeeks();
+
+    days.innerHTML = '';
+
+    weeks.forEach(week => {
+        let dates = week.getDates();
+        dates.forEach(date => {
+            let dateNumber = date.getDate();
+            let dayCell = document.createElement('div');
+            dayCell.classList.add('calendar-day');
+            dayCell.textContent = dateNumber;
+            days.appendChild(dayCell);
+        });
+    });
+}
+
+// perform on load
+document.addEventListener('DOMContentLoaded', function() {
+    let currentDate = new Date();
+    let currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
+    fillCalendar(currentMonth);
+});

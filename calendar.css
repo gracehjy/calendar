@@ -17,6 +17,7 @@ button {
     cursor: pointer;
 } */
 
+/* SOURCE: https://www.w3schools.com/css/css_grid.asp */
 .calendar-main {
     display: grid;
     grid-template-areas: "back title next";
@@ -35,18 +36,21 @@ button {
     display: grid;
     grid-template-rows: auto;
     grid-template-columns: repeat(7, 1fr);
-    padding-bottom: 1em;
+    gap: 2px;
+    padding-bottom: 5px;
 }
 
 .calendar-days {
-    text-align: center;
     display: grid;
-    grid-template-rows: repeat(6, 1fr);
+    grid-template-rows: auto;
     grid-template-columns: repeat(7, 1fr);
+    border: 1px solid black;
 }
 
-.calendar-days p {
-    margin: 0;
-    padding: 1em;
-    border: 1px black;
+.calendar-day {
+    border: 1px solid black;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 70px; 
+    text-align: left;
 }
