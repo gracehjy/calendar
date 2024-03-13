@@ -94,6 +94,15 @@ function Month(year,month){
         }
         return weeks;
     };
+
+    this.getMonthName = function () {
+        let monthNames = [
+            "January", "February", "March", "April",
+            "May", "June", "July", "August",
+            "September", "October", "November", "December"
+        ];
+        return monthNames[this.month];
+    };
 }
 
 // fills the calendar cells with values representing the days of the month
@@ -113,6 +122,10 @@ function fillCalendar(month) {
             days.appendChild(dayCell);
         });
     });
+
+    // adds the month and year on the calendar
+    let monthYearTitle = document.getElementById("month-yearnum");
+    monthYearTitle.textContent = month.getMonthName() + " " + month.year;
 }
 
 // perform on load
@@ -120,4 +133,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentDate = new Date();
     let currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
     fillCalendar(currentMonth);
+
+    document.getElementById('previous').addEventListener('click', function () {
+        currentMonth = currentMonth.prevMonth();
+        fillCalendar(currentMonth);
+    });
+
+    document.getElementById('future').addEventListener('click', function () {
+        currentMonth = currentMonth.nextMonth();
+        fillCalendar(currentMonth);
+    });
+
 });

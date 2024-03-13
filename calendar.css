@@ -12,10 +12,9 @@ button {
     padding: 1em 0;
 }
 
-/* button:hover {
-    box-shadow: 3px 3px rgb(166, 172, 179);
+button:hover {
     cursor: pointer;
-} */
+}
 
 /* SOURCE: https://www.w3schools.com/css/css_grid.asp */
 .calendar-main {
@@ -29,6 +28,7 @@ button {
     text-align: center;
     grid-area: title;
     font-weight: bold;
+    color: black;
 }
 
 .calendar-weeks {
