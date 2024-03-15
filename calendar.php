@@ -6,6 +6,13 @@
 </head>
 
 <body>
+    <?php
+            session_start();
+            include("navbar.php");
+            // include database connection script
+            include("database.php");
+    ?>
+    
     <div class="calendar">
         <div class="calendar-main">
             <button type="button" id="previous">
