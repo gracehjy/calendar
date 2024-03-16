@@ -4,7 +4,7 @@
     if (isset($_SESSION["username"])) {  
         echo '<div class="navbar">';
         echo '<a href="profile.php">Profile</a>';
-        echo '<a href="addevent.php" id="add-event">Add Event</a>';
+        echo '<a href="addevent.html" id="add-event">Add Event</a>';
         // If logged in, display "Profile" and "Sign Out" links
         echo '<a href="login.php?logout=true">Sign Out</a>';
         echo '</div>';
