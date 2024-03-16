@@ -4,35 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Change Username</title>
 </head>
 <body>
-    <h2>Login Below:</h2>
-    <form id="loginForm">
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" required>
-        <br><br>
+    <h2>Change Username:</h2>
+    <form id="changeUsernameForm">
+        <label for="new_username">New Username:</label>
+        <input type="text" name="new_username" id="new_username" required>
+        <br>
+        <br>
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" required>
-        <br><br>
-        <input type="submit" value="Login">
+        <br>
+        <br>
+        <input type="submit" value="Change Username">
     </form>
     <br>
-    <p>Don't have an account? Sign up <a href="signup.html">here</a>!</p>
-    <p>Click <a href="calendar.php">here</a> to return to the site.</p>
+    <p>Click <a href="calendar.php">here</a> to return to the calendar.</p>
 
     <script>
-        // SOURCE: https://www.w3schools.com/jsref/event_preventdefault.asp
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
+        document.getElementById("changeUsernameForm").addEventListener("submit", function(event) {
             event.preventDefault();
 
             let data = {
-                username: document.getElementById("username").value,
+                new_username: document.getElementById("new_username").value,
                 password: document.getElementById("password").value
             };
 
-            // send a POST request to login.php
-            fetch("login.php", {
+            // send a POST request to changeuser.php
+            fetch("changeuser.php", {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: {
@@ -41,10 +41,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    window.location.href = "calendar.php"; 
+                if(data.success){
+                    alert("You have successfully changed your username!");
+                    window.location.href = "calendar.php";
                 } else {
-                    alert(data.message); 
+                    alert("Failed to change username: " + data.message);
                 }
             })
             .catch(error => console.error(error));
