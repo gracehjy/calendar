@@ -18,7 +18,9 @@
             <input type="text" name="edate" id="edate" required>
             <br><br>
             <label for="tag">Tags:</label>
-            <input type="text" name="etag" id="etag">
+            <select name="etag" id="etag">
+                <option value="">Select tag or create new</option>
+            </select>
             <br><br>
             <input type="submit" value="Add Event">
         </form>
@@ -27,6 +29,25 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // function to get existing tags
+            function getTags() {
+                get("gettags.php")
+                .then(response => response.json())
+                .then(data => {
+                    const selectTagDropdown = document.getElementById("etag");
+                    selectTagDropdown.innerHTML = '<option value="">Select tag or create new</option>';
+                    data.forEach(tag => {
+                        const option = document.createElement("option");
+                        option.value = tag;
+                        option.textContent = tag;
+                        selectTagDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error(error));
+            }
+
+            getTags();
+
             // event listener to add an event
             document.getElementById("add-event").addEventListener("click", function(event) {
                 event.preventDefault(); 
@@ -55,6 +76,7 @@
                     if (data.success) {
                         alert("Event added successfully!");
                         document.getElementById("popup").classList.remove("show");
+                        getTags();
                     } else {
                         alert("Error: " + data.message); 
                     }
