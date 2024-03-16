@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="calendar.css">
+    <title>Add Event</title>
+</head>
+<body>
+    <div id="popup" class="event-popup">
+        <h2>Add Event</h2>
+        <form id="addevent">
+            <label for="event-title">Title:</label>
+            <input type="text" name="etitle" id="etitle" required>
+            <br><br>
+            <label for="date">Date:</label>
+            <input type="text" name="edate" id="edate" required>
+            <br><br>
+            <label for="tag">Tags:</label>
+            <input type="text" name="etag" id="etag">
+            <br><br>
+            <input type="submit" value="Add Event">
+        </form>
+        <button id="closePopup">Close</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // event listener to add an event
+            document.getElementById("add-event").addEventListener("click", function(event) {
+                event.preventDefault(); 
+                // show the popup
+                document.getElementById("popup").style.display = "block";
+            });
+
+            // event listener to the close button of the popup window
+            document.getElementById("closePopup").addEventListener("click", function() {
+                // hide the popup
+                document.getElementById("popup").style.display = "none";
+            });
+
+            // event listener for the add event form
+            document.getElementById("addevent").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent the form from submitting
+
+                let formData = new FormData(this);
+
+                fetch("addevent.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Event added successfully!");
+                        document.getElementById("popup").classList.remove("show");
+                    } else {
+                        alert("Error: " + data.message); 
+                    }
+                }).catch(error => console.error(error));
+            });
+        });
+    </script>
+</body>
+</html>
