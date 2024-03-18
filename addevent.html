@@ -8,81 +8,85 @@
     <title>Add Event</title>
 </head>
 <body>
-    <div id="popup" class="event-popup">
-        <h2>Add Event</h2>
-        <form id="addevent">
-            <label for="event-title">Title:</label>
-            <input type="text" name="etitle" id="etitle" required>
-            <br><br>
-            <label for="date">Date:</label>
-            <input type="text" name="edate" id="edate" required>
-            <br><br>
-            <label for="tag">Tags:</label>
-            <select name="etag" id="etag">
-                <option value="">Select tag or create new</option>
-            </select>
-            <br><br>
-            <input type="submit" value="Add Event">
-        </form>
-        <button id="closePopup">Close</button>
-    </div>
+    <h2>Add Event</h2>
+    <form id="addevent">
+        <label for="etitle">Title:</label>
+        <input type="text" name="etitle" id="etitle" required>
+        <br><br>
+        <label for="edate">Date:</label>
+        <input type="date" name="edate" id="edate" required>
+        <br><br>
+        <label for="starttime">Start Time:</label>
+        <input type="time" name="starttime" id="starttime" required>
+        <br><br>
+        <label for="endtime">End Time:</label>
+        <input type="time" name="endtime" id="endtime" required>
+        <br><br>
+        <label for="etag">Tags:</label>
+        <select name="etag" id="etag">
+            <option value="">Select From Existing Tags</option>
+        </select>
+        <br><br>
+        <label for="newtags">Create New Tag:</label>
+        <input type="text" name="newtags" id="newtags">
+        <br><br>
+        <input type="submit" value="Add Event">
+    </form>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // function to get existing tags
-            function getTags() {
-                get("gettags.php")
-                .then(response => response.json())
-                .then(data => {
-                    const selectTagDropdown = document.getElementById("etag");
-                    selectTagDropdown.innerHTML = '<option value="">Select tag or create new</option>';
-                    data.forEach(tag => {
-                        const option = document.createElement("option");
-                        option.value = tag;
-                        option.textContent = tag;
-                        selectTagDropdown.appendChild(option);
-                    });
-                })
-                .catch(error => console.error(error));
-            }
+    document.addEventListener("DOMContentLoaded", function() {
+        // function to get existing tags
+        function getTags() {
+            fetch("gettags.php")
+            .then(response => response.json())
+            .then(data => {
+                let selectTagDropdown = document.getElementById("etag");
+                selectTagDropdown.innerHTML = '<option value="">Select tag or create new</option>';
+                data.forEach(tag => {
+                    let option = document.createElement("option");
+                    option.value = tag;
+                    option.textContent = tag;
+                    selectTagDropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error(error));
+        }
 
-            getTags();
+        // event listener for the add event form
+        document.getElementById("addevent").addEventListener("submit", function(event) {
+            event.preventDefault();
 
-            // event listener to add an event
-            document.getElementById("addevent").addEventListener("click", function(event) {
-                event.preventDefault(); 
-                // show the popup
-                document.getElementById("popup").style.display = "block";
-            });
+            let data = {
+                etitle: document.getElementById("etitle").value,
+                edate: document.getElementById("edate").value,
+                etag: document.getElementById("etag").value,
+                newtags: document.getElementById("newtags").value,
+                starttime: document.getElementById("starttime").value,
+                endtime: document.getElementById("endtime").value
+            };
 
-            // event listener to the close button of the popup window
-            document.getElementById("closePopup").addEventListener("click", function() {
-                // hide the popup
-                document.getElementById("popup").style.display = "none";
-            });
-
-            // event listener for the add event form
-            document.getElementById("addevent").addEventListener("submit", function(event) {
-                event.preventDefault(); // Prevent the form from submitting
-
-                let formData = new FormData(this);
-
-                fetch("addevent.php", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Event added successfully!");
-                        document.getElementById("popup").classList.remove("show");
-                        getTags();
-                    } else {
-                        alert("Error: " + data.message); 
-                    }
-                }).catch(error => console.error(error));
-            });
+            // send a POST request to addevent.php
+            fetch("addevent.php", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Event added successfully!");
+                    getTags();
+                } else {
+                    alert("Error: " + data.message); 
+                }
+            }).catch(error => console.error(error));
         });
+
+        // Call getTags after DOM content is loaded
+        getTags();
+    });
     </script>
 </body>
 </html>

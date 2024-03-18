@@ -10,12 +10,19 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Read JSON data from the request body
+$json_str = file_get_contents('php://input');
+$json_obj = json_decode($json_str, true);
 
-    $title = $_POST['etitle'];
-    $date = $_POST['edate'];
-    $tag = $_POST['etag'];
-    $newTag = $_POST['newtag'];
+// Check if the JSON data was successfully decoded
+if ($json_obj !== null) {
+    // Extract data from the JSON object
+    $title = $json_obj["etitle"];
+    $date = $json_obj["edate"];
+    $tag = $json_obj["etag"];
+    $newTag = $json_obj["newtag"];
+    $starttime = $json_obj['starttime'];
+    $endtime = $json_obj['endtime'];
 
     if (!empty($newTag)) {
         $tag = $newTag;
@@ -27,12 +34,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare and execute SQL statement to insert event
-    $event = $mysqli->prepare("INSERT INTO events (user_id, title, date, tag) VALUES (?, ?, ?, ?)");
-    $event->bind_param("isss", $user_id, $title, $date, $tag);
-    
+    $event = $mysqli->prepare("INSERT INTO events (user_id, title, date, tag, starttime, endtime) VALUES (?, ?, ?, ?, ?, ?)");
+    $event->bind_param("isssss", $user_id, $title, $date, $tag, $starttime, $endtime);
+
     if ($event->execute()) {
         $event_id = $event->insert_id;
-        
+
         $event->close();
 
         // Send the event ID back as part of the response
@@ -43,7 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo json_encode($response);
     }
 } else {
-    header('Location: calendar.php');
-    exit();
+    // Handle case where JSON data is invalid or not provided
+    $response = array("success" => false, "message" => "Invalid or missing JSON data");
+    echo json_encode($response);
 }
 ?>
