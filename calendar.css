@@ -77,3 +77,13 @@ button:hover {
     background-color: white;
     padding: 20px;
 }
+
+header {
+    width: 100%;
+    padding: 20px 0;
+}
+
+header .view-box {
+    width: 900px;
+    margin: auto;
+}

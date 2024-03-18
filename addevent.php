@@ -11,31 +11,29 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Read JSON data from the request body
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
 
-// // Extract data from the JSON object
 $title = $json_obj["etitle"];
 $date = $json_obj["edate"];
 $tag = $json_obj['etag'];
 //isset($json_obj["etag"]) ? $json_obj["etag"] : null;
-//$newTag = isset($json_obj["newtag"]) ? $json_obj["newtag"] : null;
+$newTag = isset($json_obj["newtag"]) ? $json_obj["newtag"] : null;
 $starttime = $json_obj['starttime'];
 $endtime = $json_obj['endtime'];
 
-// // Insert new tag if provided
-// if (!empty($newTag)) {
-//     $tag = $newTag;
-//     $insertTag = $mysqli->prepare("INSERT INTO tags (user_id, tag_name) VALUES (?, ?)");
-//     $insertTag->bind_param("is", $user_id, $tag);
-//     if (!$insertTag->execute()) {
-//         $response = array("success" => false, "message" => "Error adding new tag: " . $insertTag->error);
-//         echo json_encode($response);
-//         exit();
-//     }
-//     $insertTag->close();
-// }
+// check if there's a new tag
+if (!empty($newTag)) {
+    $tag = $newTag;
+    $insertTag = $mysqli->prepare("INSERT INTO tags (user_id, tag_name) VALUES (?, ?)");
+    $insertTag->bind_param("is", $user_id, $tag);
+    if (!$insertTag->execute()) {
+        $response = array("success" => false, "message" => "Error adding new tag: " . $insertTag->error);
+        echo json_encode($response);
+        exit();
+    }
+    $insertTag->close();
+}
 
 // Prepare and execute SQL statement to insert event
 $insertEvent = $mysqli->prepare("INSERT INTO events (user_id, title, date, tag, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?);");

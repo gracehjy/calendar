@@ -105,7 +105,7 @@ function Month(year,month){
     };
 }
 
-// fills the calendar cells with values representing the days of the month
+// fills the calendar cells with values representing the days of the month and the events
 function fillCalendar(month, events) {
     let days = document.querySelector('.calendar-days');
     let weeks = month.getWeeks();
@@ -120,16 +120,21 @@ function fillCalendar(month, events) {
             dayCell.classList.add('calendar-day');
             dayCell.textContent = dateNumber;
 
-            // Check if there are events for this date
-            let eventDate = date.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
+            // check if there are events for this date
+            let eventDate = date.toISOString().split('T')[0]; // SOURCE: https://stackoverflow.com/questions/47066555/remove-time-after-converting-date-toisostring
             let eventsForDate = events.filter(event => event.date === eventDate);
 
-            // If there are events, add them to the day cell
+            // add events to the cell
             if (eventsForDate.length > 0) {
                 eventsForDate.forEach(event => {
                     let eventElement = document.createElement('div');
                     eventElement.classList.add('event');
                     eventElement.textContent = event.title;
+
+                    eventElement.addEventListener('click', function() {
+                        // display the event details
+                        alert(`Event: ${event.title}\nDate: ${event.date}\nStart Time: ${event.startTime}\nEnd Time: ${event.endTime}\nTag: ${event.tag}`);
+                    });
                     dayCell.appendChild(eventElement);
                 });
             }
