@@ -186,3 +186,14 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching event data:', error));
     });
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    // function to get and display events
+    function displayEvents() {
+        fetch("getevents.php")
+            .then(response => response.json())
+            .catch(error => console.error(error));
+    }
+
+    displayEvents();
+});
