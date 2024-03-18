@@ -9,7 +9,7 @@
 </head>
 <body>
     <h2>Add Event</h2>
-    <form id="addevent">
+    <form id="addeventForm">
         <label for="etitle">Title:</label>
         <input type="text" name="etitle" id="etitle" required>
         <br><br>
@@ -30,7 +30,7 @@
         <label for="newtags">Create New Tag:</label>
         <input type="text" name="newtag" id="newtag">
         <br><br>
-        <input type="button" value="Add Event" id="create-event">
+        <input type="submit" value="Add Event">
     </form>
 
     <script>
@@ -52,20 +52,22 @@
             .catch(error => console.error(error));
         }
 
-        // event listener for the add event form
-        document.getElementById("addevent").addEventListener("button", function(event) {
+        // Call getTags after DOM content is loaded
+        getTags();
+    });
+
+    // event listener for the add event form
+    document.getElementById("addeventForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            console.log("Form submitted"); // to check if the event listener is triggered
-
-            let data = {
-                etitle: document.getElementById("etitle").value,
-                edate: document.getElementById("edate").value,
-                etag: document.getElementById("etag").value,
-                newtag: document.getElementById("newtag").value,
-                starttime: document.getElementById("starttime").value,
-                endtime: document.getElementById("endtime").value
+            
+            const data = {
+                'etitle': document.getElementById("etitle").value,
+                'edate': document.getElementById("edate").value,
+                'etag': document.getElementById("etag").value,
+                'starttime': document.getElementById("starttime").value,
+                'endtime': document.getElementById("endtime").value
             };
-
+            console.log(data);
             // send a POST request to addevent.php
             fetch("addevent.php", {
                 method: "POST",
@@ -77,21 +79,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    getTags();
                     window.location.href = "calendar.php"; 
                 } else {
                     alert("Error: " + data.message); 
                 }
-            }).catch(error => console.error(error));
-
-            document.getElementById('create-event').addEventListener('click', function () {
-                window.location.href = 'calendar.php';
-            });
+            })
+            .catch(error => console.error(error));
         });
-
-        // Call getTags after DOM content is loaded
-        getTags();
-    });
     </script>
 </body>
 </html>
