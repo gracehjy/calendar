@@ -28,7 +28,7 @@
         </select>
         <br><br>
         <label for="newtags">Create New Tag:</label>
-        <input type="text" name="newtags" id="newtags">
+        <input type="text" name="newtag" id="newtag">
         <br><br>
         <input type="submit" value="Add Event">
     </form>
@@ -55,12 +55,13 @@
         // event listener for the add event form
         document.getElementById("addevent").addEventListener("submit", function(event) {
             event.preventDefault();
+            console.log("Form submitted"); // Add this line to check if the event listener is triggered
 
             let data = {
                 etitle: document.getElementById("etitle").value,
                 edate: document.getElementById("edate").value,
                 etag: document.getElementById("etag").value,
-                newtags: document.getElementById("newtags").value,
+                newtag: document.getElementById("newtag").value,
                 starttime: document.getElementById("starttime").value,
                 endtime: document.getElementById("endtime").value
             };
@@ -76,8 +77,8 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert("Event added successfully!");
                     getTags();
+                    window.location.href = "calendar.php"; 
                 } else {
                     alert("Error: " + data.message); 
                 }

@@ -11,14 +11,13 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // Prepare and execute SQL statement to fetch distinct tags for the user
-$stmt = $mysqli->prepare("SELECT DISTINCT tag FROM tags WHERE user_id = ?");
+$stmt = $mysqli->prepare("SELECT tag_name FROM tags WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 
 // Check for errors in query execution
-if (!$stmt) {
-    $error_message = $mysqli->error;
-    $response = array("success" => false, "message" => "Database error: " . $error_message);
+if ($stmt->error) {
+    $response = array("success" => false, "message" => "Database error: " . $stmt->error);
     echo json_encode($response);
     exit();
 }
@@ -29,7 +28,7 @@ $result = $stmt->get_result();
 // Fetch tags into an array
 $tags = array();
 while ($row = $result->fetch_assoc()) {
-    $tags[] = $row['tag'];
+    $tags[] = $row['tag_name'];
 }
 
 // Close the statement
