@@ -184,10 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Error fetching event data:', error));
     });
-
-    document.getElementById('create-event').addEventListener('click', function () {
-        window.location.href = 'calendar.php';
-    });
 });
 
 document.addEventListener("DOMContentLoaded", function() {

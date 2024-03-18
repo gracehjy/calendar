@@ -53,9 +53,9 @@
         }
 
         // event listener for the add event form
-        document.getElementById("addevent").addEventListener("submit", function(event) {
+        document.getElementById("addevent").addEventListener("button", function(event) {
             event.preventDefault();
-            console.log("Form submitted"); // Add this line to check if the event listener is triggered
+            console.log("Form submitted"); // to check if the event listener is triggered
 
             let data = {
                 etitle: document.getElementById("etitle").value,
@@ -83,6 +83,10 @@
                     alert("Error: " + data.message); 
                 }
             }).catch(error => console.error(error));
+
+            document.getElementById('create-event').addEventListener('click', function () {
+                window.location.href = 'calendar.php';
+            });
         });
 
         // Call getTags after DOM content is loaded
