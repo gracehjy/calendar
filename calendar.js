@@ -154,7 +154,6 @@ function getEventData(year, month) {
         .catch(error => console.error('Error fetching event data:', error));
 }
 
-// perform on load
 document.addEventListener('DOMContentLoaded', function() {
     let currentDate = new Date();
     let currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
