@@ -159,25 +159,31 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentDate = new Date();
     let currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
 
-    function fillCalendar(year, month) {
-        getEventData(year, month)
-            .then(events => {
-                fillCalendar(currentMonth, events);
-            })
-            .catch(error => console.error('Error fetching event data:', error));
-    }
-
-    fillCalendar(currentMonth.year, currentMonth.month + 1);
+    // get event data
+    getEventData(currentMonth.year, currentMonth.month + 1)
+        .then(events => {
+            // fill the calendar
+            fillCalendar(currentMonth, events);
+        })
+        .catch(error => console.error('Error fetching event data:', error));
 
     // previous and next months
     document.getElementById('previous').addEventListener('click', function () {
         currentMonth = currentMonth.prevMonth();
-        fillCalendar(currentMonth.year, currentMonth.month + 1);
+        getEventData(currentMonth.year, currentMonth.month + 1)
+            .then(events => {
+                fillCalendar(currentMonth, events);
+            })
+            .catch(error => console.error('Error fetching event data:', error));
     });
 
     document.getElementById('future').addEventListener('click', function () {
         currentMonth = currentMonth.nextMonth();
-        fillCalendar(currentMonth.year, currentMonth.month + 1);
+        getEventData(currentMonth.year, currentMonth.month + 1)
+            .then(events => {
+                fillCalendar(currentMonth, events);
+            })
+            .catch(error => console.error('Error fetching event data:', error));
     });
 
     document.getElementById('create-event').addEventListener('click', function () {
