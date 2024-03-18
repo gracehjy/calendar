@@ -121,20 +121,29 @@ function fillCalendar(month, events) {
             dayCell.textContent = dateNumber;
 
             // check if there are events for this date
-            let eventDate = date.toISOString().split('T')[0]; // SOURCE: https://stackoverflow.com/questions/47066555/remove-time-after-converting-date-toisostring
+            // SOURCE: https://stackoverflow.com/questions/47066555/remove-time-after-converting-date-toisostring
+            let eventDate = date.toISOString().split('T')[0];
             let eventsForDate = events.filter(event => event.date === eventDate);
 
             // add events to the cell
             if (eventsForDate.length > 0) {
-                eventsForDate.forEach(event => {
+                eventsForDate.forEach(event => { 
                     let eventElement = document.createElement('div');
                     eventElement.classList.add('event');
-                    eventElement.textContent = event.title;
 
-                    eventElement.addEventListener('click', function() {
-                        // display the event details
-                        alert(`Event: ${event.title}\nDate: ${event.date}\nStart Time: ${event.startTime}\nEnd Time: ${event.endTime}\nTag: ${event.tag}`);
+                    // SOURCE: https://www.geeksforgeeks.org/how-to-create-a-link-in-javascript/
+                    let eventLink = document.createElement('a');
+                    eventLink.textContent = event.title;
+                    eventLink.href = '#';
+                    eventLink.title = event.title;
+
+                    eventLink.addEventListener('click', function(events) {
+                        events.preventDefault();
+                        // display event details when clicked
+                        alert(`Event: ${event.title}\nDate: ${event.date}\nStart Time: ${event.start_time}\nEnd Time: ${event.end_time}\nTag: ${event.tag}`);
                     });
+
+                    eventElement.appendChild(eventLink);
                     dayCell.appendChild(eventElement);
                 });
             }
