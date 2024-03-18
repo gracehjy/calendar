@@ -16,7 +16,7 @@
     $addEvent->execute();
     $result = $addEvent->get_result();
 
-    // Store gathered events in an array
+    // Store events in an array
     $events = [];
     while ($row = $result->fetch_assoc()) {
         $events[] = $row;
