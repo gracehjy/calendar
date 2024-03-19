@@ -3,7 +3,7 @@
     session_start();
     include("database.php");
 
-    // Check if the user is logged in
+    // check if the user is logged in
     if (!isset($_SESSION['user_id'])) {
         header('Location: login.php');
         exit();
@@ -16,14 +16,13 @@
     $addEvent->execute();
     $result = $addEvent->get_result();
 
-    // Store events in an array
+    // get events
     $events = [];
     while ($row = $result->fetch_assoc()) {
         $events[] = $row;
     }
 
     $addEvent->close();
-
-    // Return events as JSON
+    
     echo json_encode($events);
 ?>

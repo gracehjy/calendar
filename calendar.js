@@ -1,5 +1,3 @@
-// maybe put this in calendar.html? but might make the html file clutered
-
 (function(){
     "use strict";
 
@@ -105,8 +103,32 @@ function Month(year,month){
     };
 }
 
+// fills the calendar cells with values representing the days of the month
+function fillCalendar(month) {
+    let days = document.querySelector('.calendar-days');
+    let weeks = month.getWeeks();
+
+    days.innerHTML = '';
+
+    weeks.forEach(week => {
+        let dates = week.getDates();
+        dates.forEach(date => {
+            let dateNumber = date.getDate();
+            let dayCell = document.createElement('div');
+            dayCell.classList.add('calendar-day');
+            dayCell.textContent = dateNumber;
+            days.appendChild(dayCell);
+
+        });    
+    });
+    // adds the month and year on the calendar
+    let monthYearTitle = document.getElementById("month-yearnum");
+    monthYearTitle.textContent = month.getMonthName() + " " + month.year;
+}
+
+
 // fills the calendar cells with values representing the days of the month and the events
-function fillCalendar(month, events) {
+function fillCalendarWithEvents(month, events) {
     let days = document.querySelector('.calendar-days');
     let weeks = month.getWeeks();
 
@@ -125,7 +147,7 @@ function fillCalendar(month, events) {
             let eventDate = date.toISOString().split('T')[0];
             let eventsForDate = events.filter(event => event.date === eventDate);
 
-            // add events to the cell
+            // add events to the cell if they exist
             if (eventsForDate.length > 0) {
                 eventsForDate.forEach(event => { 
                     let eventElement = document.createElement('div');
@@ -146,6 +168,11 @@ function fillCalendar(month, events) {
                     eventElement.appendChild(eventLink);
                     dayCell.appendChild(eventElement);
                 });
+            } else {
+                let eventElement = document.createElement('div');
+                eventElement.classList.add('event');
+                eventElement.textContent = '';
+                dayCell.appendChild(eventElement);
             }
 
             days.appendChild(dayCell);
@@ -172,41 +199,46 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentDate = new Date();
     let currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
 
-    // get event data
-    getEventData(currentMonth.year, currentMonth.month + 1)
+    // display calendar with event data if user is logged in
+    if(sessionStorage.getItem('loggedIn') === 'true'){
+        getEventData(currentMonth.year, currentMonth.month + 1)
         .then(events => {
-            // fill the calendar
-            fillCalendar(currentMonth, events);
+            // fill the calendar with events
+            fillCalendarWithEvents(currentMonth, events);
         })
         .catch(error => console.error('Error fetching event data:', error));
 
-    // previous and next months
-    document.getElementById('previous').addEventListener('click', function () {
-        currentMonth = currentMonth.prevMonth();
-        getEventData(currentMonth.year, currentMonth.month + 1)
-            .then(events => {
-                fillCalendar(currentMonth, events);
-            })
-            .catch(error => console.error('Error fetching event data:', error));
-    });
+        // previous and next months
+        document.getElementById('previous').addEventListener('click', function () {
+            currentMonth = currentMonth.prevMonth();
+            getEventData(currentMonth.year, currentMonth.month + 1)
+                .then(events => {
+                    fillCalendarWithEvents(currentMonth, events);
+                })
+                .catch(error => console.error('Error fetching event data:', error));
+        });
 
-    document.getElementById('future').addEventListener('click', function () {
-        currentMonth = currentMonth.nextMonth();
-        getEventData(currentMonth.year, currentMonth.month + 1)
-            .then(events => {
-                fillCalendar(currentMonth, events);
-            })
-            .catch(error => console.error('Error fetching event data:', error));
-    });
-});
+        document.getElementById('future').addEventListener('click', function () {
+            currentMonth = currentMonth.nextMonth();
+            getEventData(currentMonth.year, currentMonth.month + 1)
+                .then(events => {
+                    fillCalendarWithEvents(currentMonth, events);
+                })
+                .catch(error => console.error('Error fetching event data:', error));
+        });
+    } else {
+        // display the calendar without events
+        fillCalendar(currentMonth);
 
-document.addEventListener("DOMContentLoaded", function() {
-    // function to get and display events
-    function displayEvents() {
-        fetch("getevents.php")
-            .then(response => response.json())
-            .catch(error => console.error(error));
+        // previous and next months
+        document.getElementById('previous').addEventListener('click', function () {
+            currentMonth = currentMonth.prevMonth();
+            fillCalendar(currentMonth)
+        });
+
+        document.getElementById('future').addEventListener('click', function () {
+            currentMonth = currentMonth.nextMonth();
+            fillCalendar(currentMonth)
+        });
     }
-
-    displayEvents();
 });

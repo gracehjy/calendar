@@ -24,13 +24,9 @@
         document.getElementById("signup_btn").addEventListener("click", function(event) {
             event.preventDefault();
 
-            let username = document.getElementById("username").value;
-            let password = document.getElementById("password").value;
-
-            // create a JSON object with user input
             let data = {
-                "username": username,
-                "password": password
+                "username": document.getElementById("username").value,
+                "password": document.getElementById("password").value
             };
 
             // send a POST request to signup.php
@@ -45,7 +41,6 @@
             .then(data => {
                 if (data.success) {
                     alert("Registration successful! You can now log in.");
-                    // Redirect to login page
                     window.location.href = "login.html";
                 } else {
                     alert("Registration failed: " + data.message);

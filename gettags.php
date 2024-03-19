@@ -2,7 +2,7 @@
 session_start();
 include("database.php");
 
-// Check if the user is logged in
+// check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
@@ -10,31 +10,27 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Prepare and execute SQL statement to fetch distinct tags for the user
+// get tags for user
 $stmt = $mysqli->prepare("SELECT tag_name FROM tags WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 
-// Check for errors in query execution
-if ($stmt->error) {
-    $response = array("success" => false, "message" => "Database error: " . $stmt->error);
-    echo json_encode($response);
-    exit();
-}
+// // Check for errors in query execution
+// if ($stmt->error) {
+//     $response = array("success" => false, "message" => "Database error: " . $stmt->error);
+//     echo json_encode($response);
+//     exit();
+// }
 
-// Get the result
 $result = $stmt->get_result();
 
-// Fetch tags into an array
 $tags = array();
 while ($row = $result->fetch_assoc()) {
     $tags[] = $row['tag_name'];
 }
 
-// Close the statement
 $stmt->close();
 
-// Return tags as JSON response
 header('Content-Type: application/json');
 echo json_encode($tags);
 ?>

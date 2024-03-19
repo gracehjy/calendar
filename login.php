@@ -3,13 +3,6 @@ session_start();
 include("database.php");
 header("Content-Type: application/json");
 
-if (isset($_GET["logout"])) {
-    // Redirect to login page
-    header("Location: login.html");
-    session_destroy();
-    exit(); 
-}
-
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
 
@@ -31,7 +24,7 @@ if ($stmt->num_rows == 1) {
         $_SESSION["username"] = $username;
         $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
         $stmt->close();
-        echo json_encode(array("success" => true));
+        echo json_encode(array("success" => true, "loggedIn" => true));
         exit;
     } else {
         $stmt->close();
