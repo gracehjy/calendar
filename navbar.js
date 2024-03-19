@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     // add event listener for the add event link
     document.getElementById("addeventLink").addEventListener("click", function(event) {
@@ -63,5 +62,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.innerHTML = html;
             })
             .catch(error => console.error("Error fetching signup.html:", error));
+    });
+
+    // add event listener for calendar link
+    document.getElementById("cal").addEventListener("click", function(event) {
+        event.preventDefault();
+
+        fetch("calendar.php")
+            .then(response => response.text())
+            .then(data => {
+                document.body.innerHTML = data;
+            })
+            .catch(error => console.error("Error fetching calendar.php:", error));
     });
 });

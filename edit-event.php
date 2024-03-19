@@ -10,102 +10,98 @@
 <body>
     <?php
         session_start();
-        include("navbar.php");
         include("database.php");
 
-        // check if the user is logged in
-        if (!isset($_SESSION["username"])) {
-            header("Location: login.php");
-            exit(); 
-        }
-
-        // check if the story_id is provided in the URL
-        if (!isset($_GET["story_id"])) {
-            echo "Invalid request.";
-            exit();
-        }
-
-        $story_id = $_GET["story_id"];
-        $user_id = $_SESSION["user_id"];
-
-        // get existing story details
-        $stmt = $mysqli->prepare("SELECT * FROM stories WHERE story_id = ? AND user_id = ?");
-        $stmt->bind_param("ii", $story_id, $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
-
-        if ($result->num_rows > 0) {
-            $story = $result->fetch_assoc();
-        } else {
-            echo "You cannot edit this.";
-            exit();
-        }
-
-        // update the story
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if(!hash_equals($_SESSION['token'], $_POST['token'])){
-                die("Request forgery detected");
-            }
-
-            $newTitle = $_POST["title"];
-            $newBody = $_POST["body"];
-            $newLink = $_POST["link"];
-
-            $stmt = $mysqli->prepare("UPDATE stories SET title = ?, body = ?, link = ? WHERE story_id = ?");
-            $stmt->bind_param("sssi", $newTitle, $newBody, $newLink, $story_id);
-            
-            if ($stmt->execute()) {
-                $stmt->close();
-                echo "<p>Story updated successfully!</p>";
-
-                // check if the link changed
-                if ($newLink != $story['link']) {
-                    $stmt = $mysqli->prepare("SELECT * FROM links WHERE story_id = ?");
-                    $stmt->bind_param("i", $story_id);
-                    $stmt->execute();
-                    $linkResult = $stmt->get_result();
-                    $stmt->close();
-
-                    if ($linkResult->num_rows > 0) {
-                        // update the current link
-                        $stmt = $mysqli->prepare("UPDATE links SET link = ? WHERE story_id = ?");
-                        $stmt->bind_param("si", $newLink, $story_id);
-                        $stmt->execute();
-                        $stmt->close();
-                    } 
-                    else {
-                        // add the new link into the table
-                        $stmt = $mysqli->prepare("INSERT INTO links (story_id, link) VALUES (?, ?)");
-                        $stmt->bind_param("is", $story_id, $newLink);
-                        $stmt->execute();
-                        $stmt->close();
-                    }
-                }
-        
-                header("Location: user_stories.php");
-                exit();
-            }
-            else {
-                $stmt->close();
-                echo  $mysqli->error;
-            }
-        }
+        // get current event details
+        $event_id = $_GET["event_id"];
+        $query = $mysqli->prepare("SELECT title, date, start_time, end_time, tag FROM events WHERE event_id = ?");
+        $query->bind_param("i", $event_id);
+        $query->execute();
+        $result = $query->get_result();
+        $event = $result->fetch_assoc();
     ?>
 
-    <h2>Edit Story</h2>
-    <form action="edit_story.php?story_id=<?php echo $story['story_id']; ?>" method="post">
+    <h2>Edit event</h2>
+    <form id="editForm">
         <label for="title">Title:</label>
-        <input type="text" id="title" name="title" value="<?php echo $story['title']; ?>" required>
-
-        <label for="body">Body:</label>
-        <textarea id="body" name="body" required><?php echo $story['body']; ?></textarea>
-
-        <label for="link">Link:</label>
-        <input type="text" id="link" name="link" value="<?php echo $story['link']; ?>">
-        <input type="hidden" name="token" value="<?php echo $_SESSION['token'];?>">
-
-        <input type="submit" value="Update Story">
+        <input type="text" name="title" id="title" value="<?php echo $event['title']; ?>" required>
+        <br><br>
+        <label for="date">Date:</label>
+        <input type="date" name="date" id="date" value="<?php echo $event['date']; ?>" required>
+        <br><br>
+        <label for="starttime">Start Time:</label>
+        <input type="time" name="starttime" id="starttime" value="<?php echo $event['start_time']; ?>" required>
+        <br><br>
+        <label for="endtime">End Time:</label>
+        <input type="time" name="endtime" id="endtime" value="<?php echo $event['end_time']; ?>" required>
+        <br><br>
+        <label for="tag">Tags:</label>
+        <select name="tag" id="tag">
+            <option value="">Select From Existing Tags</option>
+        </select>
+        <br><br>
+        <label for="newtag">Create New Tag:</label>
+        <input type="text" name="newtag" id="newtag" value="<?php echo $event['tag']; ?>">
+        <br><br>
+        <input type="submit" value="Edit Event">
+        <br>
     </form>
+
+    <a href="calendar.php" id="returnHome">Return to Calendar</a>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        // function to get existing tags
+        function getTags() {
+            fetch("gettags.php")
+            .then(response => response.json())
+            .then(data => {
+                let selectTagDropdown = document.getElementById("tag");
+                selectTagDropdown.innerHTML = '<option value="">Select tag or create new</option>';
+                data.forEach(tag => {
+                    let option = document.createElement("option");
+                    option.value = tag;
+                    option.textContent = tag;
+                    selectTagDropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error(error));
+        }
+
+        // Call getTags after DOM content is loaded
+        getTags();
+    });
+
+        document.getElementById("editForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let eventData = {
+                'title': document.getElementById("title").value,
+                'date': document.getElementById("date").value,
+                'tag': document.getElementById("tag").value,
+                'newtag': document.getElementById("newtag").value,
+                'starttime': document.getElementById("starttime").value,
+                'endtime': document.getElementById("endtime").value
+            };
+
+            fetch("update-event.php?event_id="+<?php echo $event_id; ?>, {
+                method: "POST",
+                body: JSON.stringify(eventData),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Event updated successfully");
+                    window.location.href = "calendar.php"; 
+                } else {
+                    alert("Error: " + data.message); 
+                }
+            })
+            .catch(error => console.error(error));
+        });
+    </script>
 </body>
 </html>

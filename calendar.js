@@ -186,11 +186,8 @@ function fillCalendarWithEvents(month, events) {
 
 // gets event data
 function getEventData(year, month) {
-    // Construct the URL to fetch event data for the given year and month
-    let url = 'getevents.php?year=' + year + '&month=' + month;
-
-    // Fetch event data from the server
-    return fetch(url)
+    // get the event data for a month of a specific year
+    return fetch('getevents.php?year=' + year + '&month=' + month)
         .then(response => response.json())
         .catch(error => console.error('Error fetching event data:', error));
 }
@@ -200,6 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
 
     // display calendar with event data if user is logged in
+    // SOURCE:https://stackoverflow.com/questions/35292378/check-if-user-has-logged-in-on-client-side
     if(sessionStorage.getItem('loggedIn') === 'true'){
         getEventData(currentMonth.year, currentMonth.month + 1)
         .then(events => {
@@ -211,6 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // previous and next months
         document.getElementById('previous').addEventListener('click', function () {
             currentMonth = currentMonth.prevMonth();
+            // add 1 because the months range from 0 to 11
             getEventData(currentMonth.year, currentMonth.month + 1)
                 .then(events => {
                     fillCalendarWithEvents(currentMonth, events);
