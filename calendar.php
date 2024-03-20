@@ -32,11 +32,11 @@
     <div class="calendar">
         <div class="calendar-main">
             <button type="button" id="previous">
-                <<<
+                &lt;&lt;&lt;
             </button>
             <div class="month-year" id="month-yearnum"></div>
             <button type="button" id="future">
-                >>>
+                &gt;&gt;&gt;
             </button>
         </div>
 
@@ -71,3 +71,4 @@
         });
         </script>
 </body>
+</html>
