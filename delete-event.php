@@ -1,11 +1,12 @@
 <?php
+    ini_set("session.cookie_httponly", 1);
     session_start();
     include("database.php");
 
-    // Check if user is logged in
+    // check if the user is logged in
     if (!isset($_SESSION["username"])) {
-        header("Location: login.html");
-        exit(); 
+        echo json_encode(array("success" => false, "message" => "Please log in first."));
+        exit();
     }
 
     if (!isset($_GET["event_id"])) {
@@ -13,12 +14,12 @@
         exit();
     }
 
-    $user_id = $_SESSION["user_id"];
-    $event_id = $_GET["event_id"]; 
+    $user_id = htmlentities($_SESSION["user_id"]);
+    $event_id = htmlentities($_GET["event_id"]); 
 
-    // Check if the current user is the one who created the event
+    // check if the current user is the one who created the event
     $stmt = $mysqli->prepare("SELECT user_id FROM events WHERE event_id = ?");
-    $stmt->bind_param("i", $event_id); // Bind event_id parameter
+    $stmt->bind_param("i", $event_id); 
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();

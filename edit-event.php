@@ -9,11 +9,12 @@
 </head>
 <body>
     <?php
+        ini_set("session.cookie_httponly", 1);
         session_start();
         include("database.php");
 
         // get current event details
-        $event_id = $_GET["event_id"];
+        $event_id = htmlentities($_GET["event_id"]);
         $query = $mysqli->prepare("SELECT title, date, start_time, end_time, tag FROM events WHERE event_id = ?");
         $query->bind_param("i", $event_id);
         $query->execute();

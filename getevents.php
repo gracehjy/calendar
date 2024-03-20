@@ -1,28 +1,30 @@
 <?php
-
+    ini_set("session.cookie_httponly", 1);
     session_start();
     include("database.php");
 
     // check if the user is logged in
-    if (!isset($_SESSION['user_id'])) {
-        header('Location: login.php');
+    if (!isset($_SESSION["username"])) {
+        echo json_encode(array("success" => false, "message" => "Please log in first."));
         exit();
     }
 
-    $user_id = $_SESSION['user_id'];
+    $user_id = htmlentities($_SESSION['user_id']);
 
-    $addEvent = $mysqli->prepare("SELECT * FROM events WHERE user_id = ?");
-    $addEvent->bind_param("i", $user_id);
-    $addEvent->execute();
-    $result = $addEvent->get_result();
+    // get user's own events
+    $ownEvents = $mysqli->prepare("SELECT * FROM events WHERE user_id = ?");
+    $ownEvents->bind_param("i", $user_id);
+    $ownEvents->execute();
+    $result1 = $ownEvents->get_result();
 
-    // get events
+
+    // all events for user
     $events = [];
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result1->fetch_assoc()) {
         $events[] = $row;
     }
 
-    $addEvent->close();
-    
+    $ownEvents->close();
+
     echo json_encode($events);
 ?>

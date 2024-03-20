@@ -1,16 +1,23 @@
 <?php
+    ini_set("session.cookie_httponly", 1);
     session_start();
     include("database.php");
 
-    // check if the user is logged in, otherwise send them to login.php
-    if (!isset($_SESSION["user_id"])) {
-        header("Location: login.php");
-        exit(); 
+    // check if the user is logged in
+    if (!isset($_SESSION["username"])) {
+        echo json_encode(array("success" => false, "message" => "Please log in first."));
+        exit();
     }
 
-    $user_id = $_SESSION['user_id']; // get the user_id
+    $user_id = htmlentities($_SESSION['user_id']); // get the user_id
 
     $mysqli->begin_transaction();
+
+    // delete user tags
+    $stmt = $mysqli->prepare("DELETE FROM tags WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $stmt->close();
 
     // delete user events
     $stmt = $mysqli->prepare("DELETE FROM events WHERE user_id = ?");
@@ -26,9 +33,9 @@
 
     $mysqli->commit();
 
-    // destroy session
+    // destroy session and update loggedIn status
     session_unset();
     session_destroy();
-    header('Location: login.php');
+    echo json_encode(array("loggedIn" => false));
     exit();
 ?>

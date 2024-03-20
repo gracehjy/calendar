@@ -8,17 +8,18 @@
 </head>
 <body>
     <?php
+        ini_set("session.cookie_httponly", 1);
         session_start();
         include("database.php");
 
         // check if the user is logged in
-        if (!isset($_SESSION['username'])) {
-            header('Location: login.html'); 
+        if (!isset($_SESSION["username"])) {
+            echo json_encode(array("success" => false, "message" => "Please log in first."));
             exit();
         }
 
-        $user_id = $_SESSION['user_id'];
-        $username = $_SESSION['username'];
+        $user_id = htmlentities($_SESSION['user_id']);
+        $username = htmlentities($_SESSION['username']);
 
         echo "<h2>Events for $username:</h2>";
 
@@ -28,7 +29,7 @@
         $query->execute();
         $result = $query->get_result();
 
-        // display the events with options to edit and delete each event
+        // display the events with options to edit, delete, and share each event
         if ($result->num_rows > 0) {
             echo "<ul>";
             while ($row = $result->fetch_assoc()) {
@@ -41,7 +42,7 @@
                 $tag = $row['tag'];
 
                 echo "<li><a href='#' class='event-link' event-info='Event: $title\nDate: $date\nStart Time: $start_time\nEnd Time: $end_time\nTag: $tag'>$title</a>";
-                echo " [<a href='edit-event.php?event_id=$event_id'>Edit</a>] [<a href='delete-event.php?event_id=$event_id'>Delete</a>]</li>";
+                echo "      [<a href='edit-event.php?event_id=$event_id'>Edit</a>]     [<a href='#' class='share-link' event-id='$event_id'>Share</a>]     [<a href='delete-event.php?event_id=$event_id'>Delete</a>]</li>";
             }
             echo "</ul>";
         } else {
@@ -58,11 +59,44 @@
         document.querySelectorAll('.event-link').forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
-
                 let event_info = this.getAttribute('event-info');
                 alert(event_info);
             });
         });
+
+        document.querySelectorAll('.share-link').forEach(link => {
+            link.addEventListener('click', function(event){
+                event.preventDefault();
+
+                let event_id = this.getAttribute('event-id');
+                let share_to_username = prompt("Enter the username you want to share this event with:");
+
+                let data = {
+                    'event_id': event_id,
+                    'share_to_username': share_to_username
+                }
+
+                fetch('share-event.php',{
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Event shared successfully"); 
+                    } else {
+                        alert(data.message); 
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred during sharing.");
+                });
+            })
+        })
     </script>
 </body>
 </html>

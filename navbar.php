@@ -1,4 +1,5 @@
 <?php
+    ini_set("session.cookie_httponly", 1);
     session_start();
     // check if the user is logged in
     if (isset($_SESSION["username"])) {  
@@ -18,4 +19,3 @@
         echo '</div>';
     }
 ?>
-

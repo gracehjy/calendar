@@ -1,17 +1,18 @@
 <?php
+    ini_set("session.cookie_httponly", 1);
     session_start();
     include("database.php");
     header("Content-Type: application/json");
 
-    // Check if the user is logged in
+    // check if the user is logged in
     if (!isset($_SESSION['user_id'])) {
         $response = array("success" => false, "message" => "User not logged in");
         echo json_encode($response);
         exit();
     }
 
-    $user_id = $_SESSION['user_id'];
-    $event_id = $_GET['event_id'];
+    $user_id = htmlentities($_SESSION['user_id']);
+    $event_id = htmlentities($_GET['event_id']);
 
     $json_str = file_get_contents('php://input');
     $json_obj = json_decode($json_str, true);
@@ -52,7 +53,8 @@
         $response = array("success" => false, "message" => "Error updating event: " . $updateEvent->error);
     }
     $updateEvent->close();
-
+    $mysqli->close();
+    
     echo json_encode($response);
     exit();
 ?>

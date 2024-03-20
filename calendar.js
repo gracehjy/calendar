@@ -184,7 +184,7 @@ function fillCalendarWithEvents(month, events) {
     monthYearTitle.textContent = month.getMonthName() + " " + month.year;
 }
 
-// gets event data
+// gets event data (including shared data yay)
 function getEventData(year, month) {
     // get the event data for a month of a specific year
     return fetch('getevents.php?year=' + year + '&month=' + month)

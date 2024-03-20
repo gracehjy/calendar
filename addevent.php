@@ -1,15 +1,16 @@
 <?php
+    ini_set("session.cookie_httponly", 1);
     session_start();
     include("database.php");
     header("Content-Type: application/json");
 
-    // Check if the user is logged in
-    if (!isset($_SESSION['user_id'])) {
-        header('Location: login.php');
+    // check if the user is logged in
+    if (!isset($_SESSION["username"])) {
+        echo json_encode(array("success" => false, "message" => "Please log in first."));
         exit();
     }
 
-    $user_id = $_SESSION['user_id'];
+    $user_id = htmlentities($_SESSION['user_id']);
 
     $json_str = file_get_contents('php://input');
     $json_obj = json_decode($json_str, true);

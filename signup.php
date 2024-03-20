@@ -1,5 +1,4 @@
 <?php
-    // include database connection script
     include("database.php");
 
     header("Content-Type: application/json");
@@ -9,6 +8,8 @@
 
     $username = $json_obj["username"];
     $password = $json_obj["password"];
+
+    $username = htmlentities($username);
 
     // hash password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
