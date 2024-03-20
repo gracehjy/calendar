@@ -28,10 +28,11 @@
         $row = $result->fetch_assoc();
         $event_owner_id = $row["user_id"];
 
-        if ($user_id !== $event_owner_id) {
+        if ($user_id != $event_owner_id) {
             echo "You do not have permission to delete this event.";
             exit();
-        } else {
+        } 
+        else {
             $stmt = $mysqli->prepare("DELETE FROM events WHERE event_id = ?");
             $stmt->bind_param("i", $event_id);
             $stmt->execute();
@@ -40,7 +41,8 @@
             header("Location: eventsList.php");
             exit();
         }
-    } else {
+    } 
+    else {
         echo "Event not found.";
         exit();
     }
