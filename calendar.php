@@ -54,17 +54,15 @@
 
     <script src="calendar.js"></script>
     <script>
-        // Add event listener for the logout link
+        // logout link
         document.getElementById('logout').addEventListener('click', function(event) {
             event.preventDefault();
 
-            // Send a request to logout.php to log the user out
             fetch('logout.php')
                 .then(response => response.json())
                 .then(data => {
-                    // Update the loggedIn status in sessionStorage
+                    // update the loggedIn status in sessionStorage
                     sessionStorage.setItem('loggedIn', data.loggedIn);
-                    // Redirect the user to the login page
                     window.location.href = "login.html";
                 })
                 .catch(error => console.error('Error logging out:', error));
